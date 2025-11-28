@@ -1,6 +1,10 @@
 Options +FollowSymLinks
 RewriteEngine On
 
+# HTTPS redirect (uncomment to enable)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?page=$1 [L]
