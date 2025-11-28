@@ -18,11 +18,15 @@ function https_redirect($enabled = false)
         || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
 
     if (!$isHttps) {
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $host = $_SERVER['SERVER_NAME'] ?? 'localhost';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $redirectUrl = 'https://' . $host . $uri;
-        header('Location: ' . $redirectUrl, true, 301);
-        exit;
+        $sanitizedUrl = filter_var($redirectUrl, FILTER_SANITIZE_URL);
+        
+        if (filter_var($sanitizedUrl, FILTER_VALIDATE_URL)) {
+            header('Location: ' . $sanitizedUrl, true, 301);
+            exit;
+        }
     }
 }
 
