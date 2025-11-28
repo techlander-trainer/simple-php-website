@@ -1,6 +1,32 @@
 <?php
 
 /**
+ * Redirects to HTTPS if the request is made over HTTP.
+ * Call this function at the beginning of your application
+ * to enforce HTTPS connections.
+ *
+ * @param bool $enabled Set to true to enable HTTPS redirect
+ */
+function https_redirect($enabled = false)
+{
+    if (!$enabled) {
+        return;
+    }
+
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+
+    if (!$isHttps) {
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $redirectUrl = 'https://' . $host . $uri;
+        header('Location: ' . $redirectUrl, true, 301);
+        exit;
+    }
+}
+
+/**
  * Displays site name.
  */
 function site_name()
